@@ -4,4 +4,4 @@
 
 <p><small>Created: <?php echo $Book['Book']['created']; ?></small></p>
 
-<p><?php echo h($Book['Book']['body']); ?></p>
+<p><?php echo h($Book['Book']['description']); ?></p>

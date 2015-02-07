@@ -6,8 +6,8 @@
     <tr>
         <th>Id</th>
         <th>Title</th>
+        <th>Description</th>
         <th>Actions</th>
-        <th>Created</th>
     </tr>
 
 <!-- ここで$Books配列をループして、投稿情報を表示 -->
@@ -19,15 +19,15 @@
             <?php echo $this->Html->link($Book['Book']['title'], array('action' => 'view', $Book['Book']['id']));?>
         </td>
         <td>
+            <?php echo h($Book['Book']['description']);?>
+        </td>
+        <td>
             <?php echo $this->Form->postLink(
                 'Delete',
                 array('action' => 'delete', $Book['Book']['id']),
                 array('confirm' => 'Are you sure?'));
             ?>
             <?php echo $this->Html->link('Edit', array('action' => 'edit', $Book['Book']['id'])); ?>
-        </td>
-        <td>
-            <?php echo $Book['Book']['created']; ?>
         </td>
     </tr>
     <?php endforeach; ?>

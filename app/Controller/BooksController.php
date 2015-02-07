@@ -38,7 +38,7 @@ class BooksController extends AppController {
 
 	public function add() {
 	    if ($this->request->is('post')) {
-	        $this->request->data['Book']['user_id'] = $this->Auth->user('id'); //Added this line
+	        $this->request->data['Book']['user_id'] = $this->Auth->user('id');
 	        if ($this->Book->save($this->request->data)) {
 	            $this->Session->setFlash(__('Your Book has been saved.'));
 	            $this->redirect(array('action' => 'index'));
@@ -58,6 +58,7 @@ class BooksController extends AppController {
 
 	    if ($this->request->is(array('Book', 'put'))) {
 	        $this->Book->id = $id;
+	        $this->request->data['Book']['user_id'] = $this->Auth->user('id');
 	        if ($this->Book->save($this->request->data)) {
 	            $this->Session->setFlash(__('Your Book has been updated.'));
 	            return $this->redirect(array('action' => 'index'));
