@@ -20,12 +20,21 @@ class RecordsController extends AppController {
         $this->set('Record', $Record);
     }
 
-    public function add() {
+    public function add($books_id) {
+
         if ($this->request->is('post')) {
+            //book_idを指定
+            if(isset($books_id)){
+                $this->request->data['Record']['book_id'] = $books_id;
+            } else {
+                $this->redirect(array('controller' => 'Books', 'action' => 'index'));
+                $this->Session->setFlash(__('Are you silly?'));
+            }
+            //user_idを指定
             $this->request->data['Record']['user_id'] = $this->Auth->user('id');
             if ($this->Record->save($this->request->data)) {
                 $this->Session->setFlash(__('Your Record has been saved.'));
-                $this->redirect(array('action' => 'index'));
+                $this->redirect(array('controller' => 'Books', 'action' => 'index'));
             }
         }
     }

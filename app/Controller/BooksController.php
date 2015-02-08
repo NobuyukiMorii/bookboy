@@ -2,6 +2,7 @@
 class BooksController extends AppController {
     public $helpers = array('Html', 'Form', 'Session');
     public $components = array('Session');
+    public $uses = array('User' , 'Book' , 'Record');
 
 	public function isAuthorized($user) {
 	    // 登録済ユーザーは投稿できる
@@ -22,6 +23,19 @@ class BooksController extends AppController {
 
     public function index() {
         $this->set('Books', $this->Book->find('all'));
+
+        foreach ($this->Book->find('all') as $i => $Book) {
+        	$book_id = $Book['Book']['id'];
+        	$latest_record[$i] = $this->Record->find('first' , array(
+        		'conditions' => array(
+        				'book_id' => $book_id,
+        				'return_date' => null,
+        		),
+				'order' => array('Record.borrow_date' => 'desc'),
+				'limit' => 1
+        	));
+        }
+        $this->set('latest_record' , $latest_record);
     }
 
     public function view($id) {
