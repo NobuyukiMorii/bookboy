@@ -4,10 +4,13 @@
 <?php
 echo $this->Form->create('Record');
 echo $this->Form->input('Record.borrow_date', array(
-    'type' => 'date',
+    'type' => 'hidden',
+    'default' => date('Y-m-d')
 ));
 echo $this->Form->input('Record.plan_to_return_date', array(
     'type' => 'date',
+    'default' => date("Y-m-d",strtotime("+1 week")),
+    'label' => 'Deadline of the returning book',
 ));
 
 echo $this->Form->end('Save Record');

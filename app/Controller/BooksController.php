@@ -22,20 +22,63 @@ class BooksController extends AppController {
 	}
 
     public function index() {
-        $this->set('Books', $this->Book->find('all'));
 
-        foreach ($this->Book->find('all') as $i => $Book) {
-        	$book_id = $Book['Book']['id'];
+        if(empty($this->data)){
+        	$Books = $this->Book->find('all');
+        } else {
+        	$conditions = array('Book.title like ?' => array("%{$this->data['Book']['title']}%"));
+        	$Books = $this->Book->find('all' , array(
+        		'conditions' => $conditions
+        	));
+        	$this->set('value' , $this->data['Book']['title']);
+        }
+        $this->set(compact('Books'));
+
+
+        foreach ($Books as $i => $Book) {
+
+        	//$latest_record[$i]を検索
+        	$conditions[$i] = array(
+    				'book_id' => $Book['Book']['id'],
+    				'return_date' => null,
+    				'return_date' => null
+        	);
         	$latest_record[$i] = $this->Record->find('first' , array(
-        		'conditions' => array(
-        				'book_id' => $book_id,
-        				'return_date' => null,
-        		),
+        		'conditions' => $conditions[$i],
 				'order' => array('Record.borrow_date' => 'desc'),
 				'limit' => 1
         	));
+        	//$latest_record[$i]に値が入っていれば
+        	if(!empty($latest_record[$i]['Record']['user_id'])){
+        		$conditions[$i] =  array('id' => $latest_record[$i]['Record']['user_id']);
+	        	$borrow_user[$i] = $this->User->find('first' , array(
+	        		'conditions' => array(
+	        			'id' => $conditions[$i]
+	        		),
+	        	));
+	        }
+	        //$latest_record[$i]に空の配列の値が入っていれば
+	        if(empty($latest_record[$i]['Record']['user_id'])){
+	        	$latest_record[$i]['Record']['borrow_date'] = '-';
+	        	$latest_record[$i]['Record']['plan_to_return_date'] = '-';
+	        	$latest_record[$i]['Record']['return_date'] = '-';
+	        	$borrow_user[$i]['User']['id'] = '-';
+	        	$borrow_user[$i]['User']['username'] = '-';
+	        	$borrow_user[$i]['User']['role'] = '-';
+	        }
+
         }
-        $this->set('latest_record' , $latest_record);
+
+
+
+
+
+
+
+
+
+
+        $this->set(compact('latest_record' , 'borrow_user'));
     }
 
     public function view($id) {
@@ -75,7 +118,7 @@ class BooksController extends AppController {
 	        $this->request->data['Book']['user_id'] = $this->Auth->user('id');
 	        if ($this->Book->save($this->request->data)) {
 	            $this->Session->setFlash(__('Your Book has been updated.'));
-	            return $this->redirect(array('action' => 'index'));
+	            return $this->redirect(array('controller' => 'Books' , 'action' => 'index'));
 	        }
 	        $this->Session->setFlash(__('Unable to update your Book.'));
 	    }
@@ -102,7 +145,5 @@ class BooksController extends AppController {
 
 	    return $this->redirect(array('action' => 'index'));
 	}
-
-
 
 }

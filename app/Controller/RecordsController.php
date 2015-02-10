@@ -5,7 +5,26 @@ class RecordsController extends AppController {
     public $components = array('Session');
 
     public function index() {
-        $this->set('Records', $this->Record->find('all'));
+        if(isset($this->data['Record']['conditions'])){
+            if($this->data['Record']['conditions'] == 1){
+                $conditions = array(
+                    'plan_to_return_date <=' => date('Y-m-d'),
+                    'return_date' => null
+                );
+                $this->set('value', 1);
+            } else {
+                $conditions = array(
+                    'return_date' => null
+                );
+                $this->set('value', 2);
+            }
+            $Records = $this->Record->find('all' , array(
+                'conditions' => $conditions
+            ));
+        } else {
+            $Records = $this->Record->find('all');
+        }
+        $this->set('Records', $Records);
     }
 
     public function view($id) {
@@ -33,7 +52,7 @@ class RecordsController extends AppController {
             //user_idを指定
             $this->request->data['Record']['user_id'] = $this->Auth->user('id');
             if ($this->Record->save($this->request->data)) {
-                $this->Session->setFlash(__('Your Record has been saved.'));
+                $this->Session->setFlash(__('You book borrowing book.Tomorrow book boy deliver it to you.'));
                 $this->redirect(array('controller' => 'Books', 'action' => 'index'));
             }
         }
@@ -44,6 +63,7 @@ class RecordsController extends AppController {
             throw new NotFoundException(__('Invalid Record'));
         }
 
+        $this->set('id' , $id);
         $Record = $this->Record->findById($id);
         if (!$Record) {
             throw new NotFoundException(__('Invalid Record'));
@@ -54,7 +74,7 @@ class RecordsController extends AppController {
             $this->request->data['Record']['user_id'] = $this->Auth->user('id');
             if ($foo = $this->Record->save($this->request->data)) {
                 $this->Session->setFlash(__('Your Record has been updated.'));
-                return $this->redirect(array('action' => 'index'));
+                return $this->redirect(array('controller' => 'Books', 'action' => 'index'));
             }
             $this->Session->setFlash(__('Unable to update your Record.'));
         }
