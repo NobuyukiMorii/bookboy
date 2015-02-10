@@ -1,6 +1,4 @@
 <!-- File: /app/View/Users/view.ctp -->
 
-<h1><?php echo h($user['User']['username']); ?></h1>
-<h1><?php echo h($user['User']['role']); ?></h1>
-
-<p><small>Created: <?php echo $user['User']['created']; ?></small></p>
+<h1>Name:<?php echo h($user['User']['username']); ?></h1>
+<h3>Role:<?php echo h($user['User']['role']); ?></h3>

@@ -7,6 +7,7 @@ class UsersController extends AppController {
     }
 
 	public function login() {
+        $this->layout = 'non-nav';
 	    if ($this->request->is('post')) {
 	        if ($this->Auth->login()) {
 	            $this->redirect(array('controller' => 'Books', 'action' => 'index'));
@@ -34,6 +35,7 @@ class UsersController extends AppController {
     }
 
     public function add() {
+        $this->layout = 'non-nav';
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {

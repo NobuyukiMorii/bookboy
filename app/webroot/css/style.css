@@ -1,0 +1,19 @@
+.margin-top30 {
+	margin-top: 30px;
+}
+
+input[type=radio] {
+    margin:0px;
+    width:20px;
+}
+.radio-horizontal label{
+    display: inline-block;
+}
+
+.message {
+    background-color: lightYellow;
+    border: 1px solid #E6DB55;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}

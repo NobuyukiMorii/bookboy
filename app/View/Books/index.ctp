@@ -1,31 +1,37 @@
-<!-- File: /app/View/Books/index.ctp -->
+    <!-- File: /app/View/Books/index.ctp -->
 
-<h1>Books</h1>
-<p><?php echo $this->Html->link('Add Book', array('action' => 'add')); ?></p>
-<p><?php echo $this->Html->link('Borrower', array('controller' => 'Records' ,'action' => 'index')); ?></p>
 
 <?php
 echo $this->Form->create('Book' , array('novalidate' => true));
+?>
+<div class="form-group">
+<?php
 if(isset($value)){
     echo $this->Form->input('Book.title', array(
         'label' => false,
         'type' => 'input',
         'value' => $value,
+        'class' => 'form-control',
+        'placeholder' => "Book name hehre"
     ));
 } else {
     echo $this->Form->input('Book.title', array(
         'label' => false,
         'type' => 'input',
+        'class' => 'form-control',
+        'placeholder' => "Book name hehre"
     ));
 }
-
-
-echo $this->Form->end('Change');
 ?>
+</div>
+<button type="submit" class="btn btn-default">Submit</button>
+</form>
 
-<table>
-    <tr>
-        <th>Id</th>
+<div class="margin-top30"></div>
+
+<table class="table table-bordered">
+    <tr class="info">
+        <th>No</th>
         <th>Title</th>
 <!--         <th>Description</th> -->
         <th>Status</th>
@@ -33,7 +39,9 @@ echo $this->Form->end('Change');
  <!--        <th>Borrow_date</th> -->
         <th>Return_date</th>
  <!--        <th>Return_date</th> -->
-        <th>Actions</th>
+        <?php if($userSession['role'] == 'admin'): ?>
+            <th>Actions</th>
+        <?php endif; ?>
     </tr>
 
 <!-- ここで$Books配列をループして、投稿情報を表示 -->
@@ -53,10 +61,10 @@ echo $this->Form->end('Change');
         </td> -->
         <td>
             <?php if($latest_record[$i]['Record']['borrow_date'] == '-'): ?>
-                <?php echo 'avaiable' ;?>
+                <?php echo '<span class="text-success">avaiable</span>' ;?>
             <?php endif; ?>
             <?php if($latest_record[$i]['Record']['borrow_date'] != '-'): ?>    
-                <?php echo 'unavaiable' ;?>
+                <?php echo '<span class="text-danger">unavaiable</span>' ;?>
             <?php endif; ?>
         </td>
         <td>
@@ -71,11 +79,16 @@ echo $this->Form->end('Change');
             <?php echo h($latest_record[$i]['Record']['borrow_date']);?>
         </td> -->
         <td>
-            <?php echo h($latest_record[$i]['Record']['plan_to_return_date']);?>
+            <?php if($latest_record[$i]['Record']['plan_to_return_date'] != '-'): ?>
+                <?php echo h(date('Y/m/d' , strtotime($latest_record[$i]['Record']['plan_to_return_date'])));?>
+            <?php else: ?>
+                <?php echo $latest_record[$i]['Record']['plan_to_return_date']; ?> 
+            <?php endif; ?>
         </td>
 <!--         <td>
             <?php echo h($latest_record[$i]['Record']['return_date']);?>
         </td> -->
+        <?php if($userSession['role'] == 'admin'): ?>
         <td>
 <!--             <?php echo $this->Form->postLink(
                 'Delete',
@@ -85,19 +98,23 @@ echo $this->Form->end('Change');
             <?php echo $this->Html->link('Edit', array('action' => 'edit', $Book['Book']['id'])); ?>  -->
 
             <!-- もし本がまだ借りられていなければ、borrow出来る -->
+
             <?php if($latest_record[$i]['Record']['borrow_date'] == '-'): ?>
-                    <a href="
+                    <a class="btn btn-info" href="
                     <?php echo $this->Html->url(array('controller' => 'Records' , 'action' => 'add', $Book['Book']['id'])); ?>
                     ">Borrow</a>
             <?php endif; ?>
             <!-- もし本を借りている人がいれば、return出来る -->
             <?php if(isset($latest_record[$i]['Record']['id'])): ?>
-                <a href="
+                <a class="btn btn-warning" href="
                 <?php echo $this->Html->url(array('controller' => 'Records' , 'action' => 'edit', $latest_record[$i]['Record']['id'])); ?>
                 ">Return</a>
             <?php endif; ?>
         </td>
+        <?php endif; ?>
     </tr>
     <?php $i++; ?>
     <?php endforeach; ?>
 </table>
+
+<p class="text-right"><?php echo $this->Html->link('Add New Book', array('action' => 'add'), array('class' => 'btn btn-primary')); ?></p>

@@ -18,12 +18,15 @@ class RecordsController extends AppController {
                 );
                 $this->set('value', 2);
             }
-            $Records = $this->Record->find('all' , array(
-                'conditions' => $conditions
-            ));
         } else {
-            $Records = $this->Record->find('all');
+            $conditions = array(
+                'return_date' => null
+            );
+            $this->set('value', 1);
         }
+        $Records = $this->Record->find('all' , array(
+            'conditions' => $conditions
+        ));
         $this->set('Records', $Records);
     }
 
